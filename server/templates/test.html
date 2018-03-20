@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="static/socket.io.js"></script>
+    <script>
+    window.onload = function() {
+        var websocket_url = 'ws://' + document.domain + ':' + location.port + '/test';
+        var socket = io.connect(websocket_url);
+        socket.on('my response', data=>{
+            alert(data.data);
+        })
+        
+    }
+    </script>
+</head>
+<body>
+    <h1>INDEX</h1>
+</body>
+</html>

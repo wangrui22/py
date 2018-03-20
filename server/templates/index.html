@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="static/jquery.js"></script>
+    <script src="static/socket.io.js"></script>
+    <script>
+    window.onload = function() {
+        var socket = io.connect('ws://127.0.0.1:5000/ai');
+        socket.on('my response', res=>{
+            //alert(res.data);
+        });
+
+        $('#btn-detection').click(function() {
+            let data_url = $('#text-data-url').val();
+            //alert(data_url);
+            socket.emit('detection_req', {data:data_url});
+        });
+
+        socket.on('detection_res', res=>{
+            //alert(`detection result: ${res.data}`);
+        });
+        
+    }
+    </script>
+</head>
+<body>
+    <h1>Test AI</h1>
+    <input type="text" id="text-data-url">
+    <input type="button" value="detection" id="btn-detection">
+</body>
+</html>
