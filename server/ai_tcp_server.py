@@ -11,6 +11,7 @@ lock = threading.Lock()
 data_queue = Queue.Queue()
 data_dict = {}
 processing_data_dict = {}
+tcp_client = None
 
 def check_processing(data_url):
     lock.acquire()
@@ -28,7 +29,8 @@ def remove_processing(data_url):
     processing_data_dict.pop(data_url)
     lock.release()
 
-def add_queue(data_url):
+def add_queue(data_url,user):
+    
     if check_processing(data_url):
         print('add processing data: %s' % data_url)
         return
@@ -54,7 +56,8 @@ def process_queue():
         set_processing(data_url)
         result = evaluate.delay(data_url)
         print('data: ', data_url, 'process done, ' , result.get())
-        remove_processing(data_url)     
+        remove_processing(data_url)
+        tcp_client.sendall(data_url.decode('utf-8')) 
 
 # just consider one client 
 class AIServer(SocketServer.BaseRequestHandler):
@@ -67,9 +70,12 @@ class AIServer(SocketServer.BaseRequestHandler):
             if not data_url:
                 print('empty data url.')
                 continue
-            data_url = data_url.decode('utf-8')
-            print('begin evaluate data: ', data_url)
-            add_queue(data_url)
+            data = data_url.decode('utf-8')
+            datas = data.split('|');
+            user = datas[0]
+            data_url = datas[1]
+            print('user: %s begin evaluate data: %s' % (user,data_url))
+            add_queue(data_url, user)
             # push request to queue
             
 def console_echo():
